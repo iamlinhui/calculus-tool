@@ -1,0 +1,82 @@
+package cn.promptness.calculus.service;
+
+import cn.promptness.calculus.cache.AccountCache;
+import cn.promptness.calculus.controller.LoginController;
+import cn.promptness.calculus.pojo.Login;
+import cn.promptness.httpclient.HttpClientUtil;
+import cn.promptness.httpclient.HttpResult;
+import javafx.concurrent.Service;
+import javafx.concurrent.Task;
+import javafx.stage.Stage;
+import org.apache.http.Header;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.Resource;
+import java.util.List;
+import java.util.Objects;
+
+@Component
+@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+public class CheckLoginService extends BaseService<Boolean> {
+    @Resource
+    private LoginController loginController;
+    @Resource
+    private HttpClientUtil httpClientUtil;
+    @Resource
+    private ConfigurableApplicationContext applicationContext;
+    private Stage loginStage;
+
+    @Override
+    protected Task<Boolean> createTask() {
+        return new Task<Boolean>() {
+            @Override
+            protected Boolean call() throws Exception {
+                while (loginStage.isShowing() && loginController.isCodeSuccess()) {
+                    Thread.sleep(3000);
+                    // 获取oa_token
+                    HttpResult httpResult = httpClientUtil.doGet(String.format("https://passport.oa.fenqile.com/user/main/scan.json?token=%s&_=%s", loginController.getToken(), loginController.getCurrentTimeMillis()), AccountCache.getHeaderList());
+                    Login login = httpResult.getContent(Login.class);
+                    if (login.isSuccess()) {
+                        AccountCache.flashHeader(httpResult.getHeaderList("Set-Cookie"));
+
+                        // 获取重定向中的ticket
+                        List<Header> location = httpClientUtil.doGet("https://passport.oa.fenqile.com/?url=https://cia.dszc-amc.com", AccountCache.getHeaderList()).getHeaderList("Location");
+                        String ticket = location.get(0).getValue().split("=")[1];
+
+                        // 获取cia sessionId
+                        List<Header> dsHeadList = httpClientUtil.doPost(String.format("https://ciaapi.dszc-amc.com/users/login?ticket=%s", ticket), AccountCache.getHeaderList()).getHeaderList("Set-Cookie");
+                        AccountCache.addHeader(dsHeadList);
+
+                        // 查询环境信息
+                        HttpResult httpResult1 = httpClientUtil.doPost("https://ciaapi.dszc-amc.com/cgi/env", AccountCache.getHeaderList());
+
+                        // {"code":"0","data":{"env":"pre"},"msg":"SUCCESS"}
+                        System.out.println(httpResult1.getMessage());
+
+                        return Boolean.TRUE;
+                    }
+                }
+                return Boolean.FALSE;
+            }
+        };
+    }
+
+    public CheckLoginService setStage(final Stage loginStage) {
+        this.loginStage = loginStage;
+        return this;
+    }
+
+    @Override
+    public Service<Boolean> expect(Callback callback) {
+        super.setOnSucceeded(event -> {
+            if (Objects.equals(Boolean.TRUE, event.getSource().getValue())) {
+                loginStage.close();
+                applicationContext.getBean(ValidateUserService.class).expect(callback).start();
+            }
+        });
+        return this;
+    }
+}

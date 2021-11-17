@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<MenuBar fx:controller="cn.promptness.calculus.controller.MenuController" xmlns="http://javafx.com/javafx/8"
+         xmlns:fx="http://javafx.com/fxml/1">
+    <Menu text="编辑">
+        <MenuItem text="新增" onAction="#add" accelerator="Shortcut+N"/>
+        <MenuItem text="退出" onAction="#close" accelerator="Shortcut+Q"/>
+    </Menu>
+    <Menu text="帮助">
+        <MenuItem text="说明" onAction="#instruction"/>
+        <MenuItem text="关于" onAction="#about"/>
+        <Menu text="日志">
+            <fx:define>
+                <ToggleGroup fx:id="toggleGroup"/>
+            </fx:define>
+            <RadioMenuItem toggleGroup="$toggleGroup" text="DEBUG" onAction="#logger"/>
+            <RadioMenuItem toggleGroup="$toggleGroup" text="INFO" onAction="#logger" selected="true"/>
+        </Menu>
+    </Menu>
+    <Menu text="账户" fx:id="accountTitle">
+        <MenuItem text="登录" onAction="#account" fx:id="accountAction"/>
+    </Menu>
+</MenuBar>
