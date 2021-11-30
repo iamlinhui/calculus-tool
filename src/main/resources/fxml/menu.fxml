@@ -10,12 +10,12 @@
     <Menu text="帮助">
         <MenuItem text="说明" onAction="#instruction"/>
         <MenuItem text="关于" onAction="#about"/>
-        <Menu text="日志">
+        <Menu text="增强">
             <fx:define>
-                <ToggleGroup fx:id="toggleGroup"/>
+                <ToggleGroup fx:id="enhanceToggleGroup"/>
             </fx:define>
-            <RadioMenuItem toggleGroup="$toggleGroup" text="DEBUG" onAction="#logger"/>
-            <RadioMenuItem toggleGroup="$toggleGroup" text="INFO" onAction="#logger" selected="true"/>
+            <RadioMenuItem toggleGroup="$enhanceToggleGroup" text="开启" onAction="#enhance"/>
+            <RadioMenuItem toggleGroup="$enhanceToggleGroup" text="关闭" onAction="#enhance" selected="true"/>
         </Menu>
     </Menu>
     <Menu text="账户" fx:id="accountTitle">

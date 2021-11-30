@@ -7,7 +7,6 @@ import cn.promptness.calculus.service.ValidateUserService;
 import cn.promptness.calculus.utils.SpringFxmlLoader;
 import cn.promptness.calculus.utils.SystemTrayUtil;
 import cn.promptness.calculus.utils.TooltipUtil;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -18,8 +17,6 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import org.springframework.boot.logging.LogLevel;
-import org.springframework.boot.logging.LoggingSystem;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Controller;
 
@@ -99,17 +96,11 @@ public class MenuController {
     }
 
     @FXML
-    public void logger(ActionEvent actionEvent) {
-        MenuItem menuItem = (MenuItem) actionEvent.getSource();
-        LoggingSystem system = LoggingSystem.get(LoggingSystem.class.getClassLoader());
-        system.setLogLevel("cn.promptness.calculus", LogLevel.valueOf(menuItem.getText().toUpperCase()));
-    }
-
-    @FXML
     public void close() {
         System.exit(0);
     }
 
+    @FXML
     public void instruction() {
         Alert alert = new Alert(Alert.AlertType.NONE);
         alert.setTitle(Constant.TITLE);
@@ -120,6 +111,7 @@ public class MenuController {
         alert.showAndWait();
     }
 
+    @FXML
     public void about() {
         Alert alert = new Alert(Alert.AlertType.NONE);
         alert.setTitle(Constant.TITLE);
@@ -128,5 +120,10 @@ public class MenuController {
         alert.initOwner(SystemTrayUtil.getPrimaryStage());
         alert.getButtonTypes().add(ButtonType.CLOSE);
         alert.showAndWait();
+    }
+
+    @FXML
+    public void enhance() {
+        Constant.ENHANCE_SWITCH = !Constant.ENHANCE_SWITCH;
     }
 }
