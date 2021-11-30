@@ -1,6 +1,7 @@
 package cn.promptness.calculus.controller;
 
 import cn.promptness.calculus.cache.AccountCache;
+import cn.promptness.calculus.data.Constant;
 import cn.promptness.calculus.service.CheckLoginService;
 import cn.promptness.calculus.service.ValidateUserService;
 import cn.promptness.calculus.utils.SpringFxmlLoader;
@@ -10,6 +11,8 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
@@ -44,8 +47,8 @@ public class MenuController {
         }).start();
     }
 
-    public void add(ActionEvent actionEvent) {
-
+    public void add() {
+        mainController.addTab();
     }
 
 
@@ -102,15 +105,28 @@ public class MenuController {
         system.setLogLevel("cn.promptness.calculus", LogLevel.valueOf(menuItem.getText().toUpperCase()));
     }
 
-    public void close(ActionEvent actionEvent) {
-
+    @FXML
+    public void close() {
+        System.exit(0);
     }
 
-    public void instruction(ActionEvent actionEvent) {
-
+    public void instruction() {
+        Alert alert = new Alert(Alert.AlertType.NONE);
+        alert.setTitle(Constant.TITLE);
+        alert.setHeaderText("使用说明");
+        alert.setContentText("1.打开MOA扫码登录\n2.输入资产号查询订单信息");
+        alert.initOwner(SystemTrayUtil.getPrimaryStage());
+        alert.getButtonTypes().add(ButtonType.CLOSE);
+        alert.showAndWait();
     }
 
-    public void about(ActionEvent actionEvent) {
-
+    public void about() {
+        Alert alert = new Alert(Alert.AlertType.NONE);
+        alert.setTitle(Constant.TITLE);
+        alert.setHeaderText("关于");
+        alert.setContentText("Version 1.0.0\nPowered By Lynn");
+        alert.initOwner(SystemTrayUtil.getPrimaryStage());
+        alert.getButtonTypes().add(ButtonType.CLOSE);
+        alert.showAndWait();
     }
 }

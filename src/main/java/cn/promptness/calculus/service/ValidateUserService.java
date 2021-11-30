@@ -2,7 +2,7 @@ package cn.promptness.calculus.service;
 
 import cn.promptness.calculus.cache.AccountCache;
 import cn.promptness.calculus.controller.MenuController;
-import cn.promptness.calculus.pojo.Response;
+import cn.promptness.calculus.pojo.FenqileResponse;
 import cn.promptness.calculus.pojo.Session;
 import cn.promptness.calculus.utils.SystemTrayUtil;
 import cn.promptness.httpclient.HttpClientUtil;
@@ -36,8 +36,7 @@ public class ValidateUserService extends BaseService<String> {
                     return null;
                 }
                 HttpResult httpResult = httpClientUtil.doGet("https://api.oa.fenqile.com/oa/api/user/session.json?resource_sn=NEWAPR_OA", AccountCache.getHeaderList());
-                Response<Session> response = httpResult.getContent(new TypeToken<Response<Session>>() {
-                }.getType());
+                FenqileResponse<Session> response = httpResult.getContent(new TypeToken<FenqileResponse<Session>>() {}.getType());
                 if (response.isSuccess()) {
                     return response.getResult().stream().findFirst().orElse(new Session()).getName();
                 }

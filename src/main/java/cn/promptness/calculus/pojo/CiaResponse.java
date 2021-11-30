@@ -2,19 +2,18 @@ package cn.promptness.calculus.pojo;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.util.List;
 import java.util.Objects;
 
-public class Response<T> {
+public class CiaResponse<T> {
 
-    @SerializedName("retmsg")
+    @SerializedName("msg")
     private String message;
 
-    @SerializedName("retcode")
+    @SerializedName("code")
     private Integer code;
 
-    @SerializedName("result_rows")
-    private List<T> result;
+    @SerializedName("data")
+    private T data;
 
     public boolean isSuccess() {
         return this.code == 0;
@@ -36,12 +35,12 @@ public class Response<T> {
         this.code = code;
     }
 
-    public List<T> getResult() {
-        return result;
+    public T getData() {
+        return data;
     }
 
-    public void setResult(List<T> result) {
-        this.result = result;
+    public void setData(T data) {
+        this.data = data;
     }
 
     @Override
@@ -52,12 +51,12 @@ public class Response<T> {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        Response<?> response = (Response<?>) o;
-        return Objects.equals(message, response.message) && Objects.equals(code, response.code) && Objects.equals(result, response.result);
+        CiaResponse<?> response = (CiaResponse<?>) o;
+        return Objects.equals(message, response.message) && Objects.equals(code, response.code) && Objects.equals(data, response.data);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(message, code, result);
+        return Objects.hash(message, code, data);
     }
 }

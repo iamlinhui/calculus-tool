@@ -53,6 +53,7 @@ public class CalculusToolApplication extends Application implements ApplicationL
         primaryStage.setScene(scene);
         primaryStage.setResizable(false);
         primaryStage.show();
+        applicationContext.publishEvent(this.getClass());
     }
 
     @Override

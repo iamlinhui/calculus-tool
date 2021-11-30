@@ -8,14 +8,12 @@ import cn.promptness.httpclient.HttpResult;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.stage.Stage;
-import org.apache.http.Header;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import java.util.List;
 import java.util.Objects;
 
 @Component
@@ -41,22 +39,8 @@ public class CheckLoginService extends BaseService<Boolean> {
                     Login login = httpResult.getContent(Login.class);
                     if (login.isSuccess()) {
                         AccountCache.flashHeader(httpResult.getHeaderList("Set-Cookie"));
-
-                        // 获取重定向中的ticket
-                        List<Header> location = httpClientUtil.doGet("https://passport.oa.fenqile.com/?url=https://cia.dszc-amc.com", AccountCache.getHeaderList()).getHeaderList("Location");
-                        String ticket = location.get(0).getValue().split("=")[1];
-
-                        // 获取cia sessionId
-                        List<Header> dsHeadList = httpClientUtil.doPost(String.format("https://ciaapi.dszc-amc.com/users/login?ticket=%s", ticket), AccountCache.getHeaderList()).getHeaderList("Set-Cookie");
-                        AccountCache.addHeader(dsHeadList);
-
-                        // 查询环境信息
-                        HttpResult httpResult1 = httpClientUtil.doPost("https://ciaapi.dszc-amc.com/cgi/env", AccountCache.getHeaderList());
-
-                        // {"code":"0","data":{"env":"pre"},"msg":"SUCCESS"}
-                        System.out.println(httpResult1.getMessage());
-
-                        return Boolean.TRUE;
+                        applicationContext.getBean(CiaLoginService.class).start();
+                        return true;
                     }
                 }
                 return Boolean.FALSE;

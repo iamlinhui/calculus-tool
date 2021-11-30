@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<Pane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="cn.promptness.calculus.controller.BillController">
+    <GridPane hgap="10" vgap="10">
+        <padding>
+            <Insets top="10" right="50" bottom="20" left="10"/>
+        </padding>
+        <Label text="资产号:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+        <TextField fx:id="assetBillId" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+        <Button onAction="#search" GridPane.columnIndex="2" GridPane.rowIndex="0">查询</Button>
+
+        <Label text="我方账单:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+        <TextArea fx:id="ourBill" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+        <Label text="资方还款计划:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+        <TextArea fx:id="otherExpectBill" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+        <Label text="资方实还账单:" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+        <TextArea fx:id="otherRealBill" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+
+    </GridPane>
+</Pane>
