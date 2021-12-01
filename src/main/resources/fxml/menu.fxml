@@ -14,8 +14,8 @@
             <fx:define>
                 <ToggleGroup fx:id="enhanceToggleGroup"/>
             </fx:define>
-            <RadioMenuItem toggleGroup="$enhanceToggleGroup" text="开启" onAction="#enhance"/>
-            <RadioMenuItem toggleGroup="$enhanceToggleGroup" text="关闭" onAction="#enhance" selected="true"/>
+            <RadioMenuItem toggleGroup="$enhanceToggleGroup" text="开启" onAction="#enhanceOn"/>
+            <RadioMenuItem toggleGroup="$enhanceToggleGroup" text="关闭" onAction="#enhanceOff" selected="true"/>
         </Menu>
     </Menu>
     <Menu text="账户" fx:id="accountTitle">
