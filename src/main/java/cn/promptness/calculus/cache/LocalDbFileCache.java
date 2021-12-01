@@ -8,6 +8,7 @@ import com.google.common.collect.Table;
 import com.google.gson.Gson;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.retry.RetryCallback;
 import org.springframework.retry.backoff.FixedBackOffPolicy;
@@ -171,7 +172,7 @@ public class LocalDbFileCache {
         try {
             lock.writeLock().lock();
             try (FileOutputStream fileOutputStream = new FileOutputStream(localDbFile.getLockPath())) {
-                fileOutputStream.write(JSON.toJSONStringWithDateFormat(localDbFile,"yyyy-MM-dd HH:mm:ss").getBytes(StandardCharsets.UTF_8));
+                fileOutputStream.write(JSON.toJSONStringWithDateFormat(localDbFile, "yyyy-MM-dd HH:mm:ss").getBytes(StandardCharsets.UTF_8));
             }
             localDbFileTable.put(localDbFile.getKey(), localDbFile.getBusinessDate(), localDbFile);
 
@@ -202,8 +203,8 @@ public class LocalDbFileCache {
                 TASK_THREAD_POOL.submit(() -> getRetryTemplate().execute((RetryCallback<Boolean, Exception>) retryContext -> {
                     log.info("第{}次删除{}", retryContext.getRetryCount(), new Gson().toJson(localDbFile));
                     // 先删除lock.ok文件
-                    Runtime.getRuntime().exec("rm -rf " + localDbFile.getLockPath());
-                    Runtime.getRuntime().exec("rm -rf " + localDbFile.getBasePath());
+                    FileUtils.forceDelete(new File(localDbFile.getLockPath()));
+                    FileUtils.forceDelete(new File(localDbFile.getBasePath()));
                     return needRemoveList.remove(localDbFile);
                 }));
             } catch (Throwable e) {
