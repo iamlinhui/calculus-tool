@@ -8,6 +8,7 @@ import cn.promptness.httpclient.HttpClientUtil;
 import cn.promptness.httpclient.HttpResult;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
+import com.alibaba.fastjson.annotation.JSONField;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.DateFormatUtils;
@@ -43,6 +44,9 @@ public class AssetBillService {
                 new String[]{loanChannelId.toString(), format, fileType.toString()},
                 AccountCache.getHeaderList()
         );
+        if (httpResult.isFailed()) {
+            return null;
+        }
         CiaResponse<FileRecord> ciaResponse = JSON.parseObject(httpResult.getMessage(), new TypeReference<CiaResponse<FileRecord>>() {}.getType());
 
         if (ciaResponse.isSuccess()) {
@@ -58,8 +62,16 @@ public class AssetBillService {
                 new String[]{assetId},
                 AccountCache.getHeaderList()
         );
-
-        CiaResponse<List<AssetBill>> ciaResponse = JSON.parseObject(httpResult.getMessage().replace("\"[", "[").replace("]\"", "]").replace("\"{", "{").replace("}\"", "}"), new TypeReference<CiaResponse<List<AssetBill>>>() {}.getType());
+        if (httpResult.isFailed()) {
+            return Lists.newArrayList();
+        }
+        CiaResponse<List<AssetBill>> ciaResponse = JSON.parseObject(httpResult.getMessage()
+                .replace("realRepayMuclt", "realRepayMulct")
+                .replace("\"[", "[")
+                .replace("]\"", "]")
+                .replace("\"{", "{")
+                .replace("}\"", "}"), new TypeReference<CiaResponse<List<AssetBill>>>() {
+        }.getType());
 
         if (ciaResponse.isSuccess()) {
             return ciaResponse.getData();

@@ -1,5 +1,6 @@
 package cn.promptness.calculus.pojo;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import lombok.Data;
 
 import java.util.Date;
@@ -86,7 +87,7 @@ public class AssetBill implements Comparable<AssetBill>{
     /**
      * 账单实还罚息
      */
-    private Long realRepayMuclt;
+    private Long realRepayMulct;
 
     /**
      * 账单实还款类型（0-未还，10-正常还款，20-部分提前还，30-全部提前还，40-逾期还款，50-坏账代偿）
