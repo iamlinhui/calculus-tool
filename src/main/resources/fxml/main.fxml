@@ -11,6 +11,6 @@
         <fx:include source="menu.fxml"/>
     </top>
     <center>
-        <TabPane fx:id="tabPane" prefWidth="750"/>
+        <TabPane fx:id="tabPane" prefWidth="850"/>
     </center>
 </BorderPane>
