@@ -11,7 +11,7 @@
     </parent>
 
     <groupId>cn.promptness</groupId>
-    <artifactId>calculus-tools</artifactId>
+    <artifactId>calculus-tool</artifactId>
     <version>1.0.0</version>
 
     <properties>

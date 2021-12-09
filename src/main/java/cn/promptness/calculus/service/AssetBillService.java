@@ -4,6 +4,7 @@ import cn.promptness.calculus.cache.AccountCache;
 import cn.promptness.calculus.pojo.AssetBill;
 import cn.promptness.calculus.pojo.CiaResponse;
 import cn.promptness.calculus.pojo.FileRecord;
+import cn.promptness.calculus.task.ContinuationTask;
 import cn.promptness.httpclient.HttpClientUtil;
 import cn.promptness.httpclient.HttpResult;
 import com.alibaba.fastjson.JSON;
@@ -26,6 +27,8 @@ public class AssetBillService {
 
     @Resource
     private HttpClientUtil httpClientUtil;
+    @Resource
+    private ContinuationTask continuationTask;
 
     /**
      * 获取标准回盘文件下载地址
@@ -48,9 +51,11 @@ public class AssetBillService {
             return null;
         }
         CiaResponse<FileRecord> ciaResponse = JSON.parseObject(httpResult.getMessage(), new TypeReference<CiaResponse<FileRecord>>() {}.getType());
-
         if (ciaResponse.isSuccess()) {
             return ciaResponse.getData();
+        }
+        if (ciaResponse.getCode() == 1) {
+            continuationTask.continuation();
         }
         return null;
     }
@@ -75,6 +80,9 @@ public class AssetBillService {
 
         if (ciaResponse.isSuccess()) {
             return ciaResponse.getData();
+        }
+        if (ciaResponse.getCode() == 1) {
+            continuationTask.continuation();
         }
         // {"code":"0001","msg":"登陆状态异常，请重新登录！"}
         log.error(httpResult.getMessage());

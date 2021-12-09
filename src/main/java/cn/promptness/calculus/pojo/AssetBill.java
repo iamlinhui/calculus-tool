@@ -1,12 +1,11 @@
 package cn.promptness.calculus.pojo;
 
-import com.alibaba.fastjson.annotation.JSONField;
 import lombok.Data;
 
 import java.util.Date;
 
 @Data
-public class AssetBill implements Comparable<AssetBill>{
+public class AssetBill implements Comparable<AssetBill> {
 
     /**
      * 账单ID
