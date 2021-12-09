@@ -6,8 +6,8 @@
 #define MyAppVersion "1.0.1"
 #define MyAppPublisher "Lynn"
 #define MyAppURL "https://www.lexin.com/"
-#define MyAppExeName "calculus-tools.exe"
-#define MySourcePath "out\artifacts\calculus_tools\bundles\calculus-tools\"
+#define MyAppExeName "Calculus Tool.exe"
+#define MySourcePath "out\artifacts\Calculus_Tool\bundles\Calculus Tool\"
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.
@@ -26,8 +26,8 @@ DisableProgramGroupPage=yes
 PrivilegesRequired=lowest
 OutputDir=D:\
 OutputBaseFilename=Calculus Tool Setup {#MyAppVersion}
-SetupIconFile={#MySourcePath}\calculus-tools.ico
-UninstallDisplayIcon={app}\calculus-tools.ico
+SetupIconFile={#MySourcePath}\Calculus Tool.ico
+UninstallDisplayIcon={app}\Calculus Tool.ico
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
