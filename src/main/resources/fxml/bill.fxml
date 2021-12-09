@@ -11,8 +11,8 @@
             <Insets top="10" right="50" bottom="20" left="10"/>
         </padding>
         <Label text="资产号:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-        <HBox GridPane.columnSpan="2" GridPane.columnIndex="1" GridPane.rowIndex="0" alignment="CENTER_LEFT" spacing="25">
-            <TextField fx:id="assetBillId" prefWidth="450"/>
+        <HBox GridPane.columnSpan="2" GridPane.columnIndex="1" GridPane.rowIndex="0" alignment="CENTER_LEFT" spacing="5">
+            <TextField fx:id="assetBillId" prefWidth="470"/>
             <Button onAction="#search">查询</Button>
         </HBox>
         <Label text="我方账单:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
