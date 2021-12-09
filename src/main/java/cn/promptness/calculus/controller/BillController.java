@@ -1,6 +1,5 @@
 package cn.promptness.calculus.controller;
 
-import cn.promptness.calculus.data.Constant;
 import cn.promptness.calculus.service.SearchService;
 import cn.promptness.calculus.utils.ProgressUtil;
 import cn.promptness.calculus.utils.SystemTrayUtil;
@@ -38,7 +37,7 @@ public class BillController {
 
     @FXML
     public void search() {
-        SearchService searchService = applicationContext.getBean(SearchService.class).setBillController(this).setEnhance(Constant.ENHANCE_SWITCH);
+        SearchService searchService = applicationContext.getBean(SearchService.class).setBillController(this);
         ProgressUtil.of(SystemTrayUtil.getPrimaryStage(), searchService).show();
     }
 }

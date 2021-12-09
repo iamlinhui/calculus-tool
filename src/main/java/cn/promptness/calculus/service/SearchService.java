@@ -1,6 +1,7 @@
 package cn.promptness.calculus.service;
 
 import cn.promptness.calculus.controller.BillController;
+import cn.promptness.calculus.data.Constant;
 import cn.promptness.calculus.pojo.*;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
@@ -16,40 +17,14 @@ import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.util.*;
-import java.util.concurrent.*;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.FutureTask;
 import java.util.stream.Collectors;
 
 @Slf4j
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class SearchService extends BaseService<Void> {
-
-    private static final Integer CORE_SIZE = Runtime.getRuntime().availableProcessors();
-
-    /**
-     * 任务分配线程池
-     */
-    private static final ExecutorService TASK_THREAD_POOL = new ThreadPoolExecutor(
-            CORE_SIZE * 2,
-            CORE_SIZE * 3,
-            5L,
-            TimeUnit.SECONDS,
-            new ArrayBlockingQueue<>(CORE_SIZE * 5),
-            new ThreadPoolExecutor.CallerRunsPolicy()
-    );
-
-    /**
-     * 任务分配线程池
-     */
-    private static final ExecutorService SUB_TASK_THREAD_POOL = new ThreadPoolExecutor(
-            CORE_SIZE * 2,
-            CORE_SIZE * 3,
-            5L,
-            TimeUnit.SECONDS,
-            new ArrayBlockingQueue<>(CORE_SIZE * 5),
-            new ThreadPoolExecutor.CallerRunsPolicy()
-    );
-
 
     @Resource
     private AssetBillService assetBillService;
@@ -59,18 +34,8 @@ public class SearchService extends BaseService<Void> {
 
     private BillController billController;
 
-    /**
-     * 是否增强查询
-     */
-    private boolean enhance = false;
-
     public SearchService setBillController(BillController billController) {
         this.billController = billController;
-        return this;
-    }
-
-    public SearchService setEnhance(boolean enhance) {
-        this.enhance = enhance;
         return this;
     }
 
@@ -96,11 +61,11 @@ public class SearchService extends BaseService<Void> {
                     return null;
                 }
                 Collections.sort(assetBillList);
-                billController.ourBill.setText(JSON.toJSONStringWithDateFormat(assetBillList, "yyyy-MM-dd", SerializerFeature.PrettyFormat));
+                billController.ourBill.setText(JSON.toJSONStringWithDateFormat(assetBillList, Constant.DATE_FORMAT, SerializerFeature.PrettyFormat));
 
                 CountDownLatch countDownLatch = new CountDownLatch(2);
-                TASK_THREAD_POOL.execute(() -> getOtherExpectList(assetBillList, countDownLatch));
-                TASK_THREAD_POOL.execute(() -> getOtherRealList(assetBillList, countDownLatch));
+                Constant.TASK_THREAD_POOL.execute(() -> getOtherExpectList(assetBillList, countDownLatch));
+                Constant.TASK_THREAD_POOL.execute(() -> getOtherRealList(assetBillList, countDownLatch));
                 countDownLatch.await();
                 return null;
             }
@@ -119,7 +84,7 @@ public class SearchService extends BaseService<Void> {
                 Date key = dateListEntry.getKey();
                 FutureTask<List<RealSearchRsp>> futureTask = new FutureTask<>(() -> getSingleRealSearchResponse(assetBill, key, innerCountDownLatch));
                 futureTaskList.add(futureTask);
-                SUB_TASK_THREAD_POOL.execute(futureTask);
+                Constant.SUB_TASK_THREAD_POOL.execute(futureTask);
             }
             innerCountDownLatch.await();
 
@@ -128,7 +93,7 @@ public class SearchService extends BaseService<Void> {
                 result.addAll(futureTask.get());
             }
             Collections.sort(result);
-            billController.otherRealBill.setText(JSON.toJSONStringWithDateFormat(result, "yyyy-MM-dd", SerializerFeature.PrettyFormat));
+            billController.otherRealBill.setText(JSON.toJSONStringWithDateFormat(result, Constant.DATE_FORMAT, SerializerFeature.PrettyFormat));
 
         } finally {
             countDownLatch.countDown();
@@ -138,7 +103,7 @@ public class SearchService extends BaseService<Void> {
     private List<RealSearchRsp> getSingleRealSearchResponse(AssetBill assetBill, Date key, CountDownLatch innerCountDownLatch) {
         try {
             List<RealSearchRsp> inner = Lists.newArrayList();
-            if (key.getTime() == -28800000) {
+            if (Objects.equals(Constant.DEFAULT_DATE, key)) {
                 return inner;
             }
             RealSearchReq.RealSearchParam realSearchParam = new RealSearchReq.RealSearchParam();
@@ -157,7 +122,7 @@ public class SearchService extends BaseService<Void> {
                 Map<String, List<RealSearchRsp>> stringListMap = platformFileService.searchCapitalRealRepay(realSearchReq);
                 inner.addAll(Optional.ofNullable(stringListMap.get(assetBill.getAssetId())).orElse(Lists.newArrayList()));
                 realSearchReq.setRealRepayDate(DateUtils.addDays(key, ++count));
-            } while (enhance && count < Calendar.DAY_OF_WEEK && inner.isEmpty());
+            } while (Constant.ENHANCE_SWITCH && count < Calendar.DAY_OF_WEEK && inner.isEmpty());
             return inner;
         } finally {
             innerCountDownLatch.countDown();
@@ -180,10 +145,10 @@ public class SearchService extends BaseService<Void> {
                 Map<String, List<ExpectSearchRsp>> capitalExpectRepay = platformFileService.searchCapitalExpectRepay(expectSearchReq);
                 expectSearchRsps.addAll(Optional.ofNullable(capitalExpectRepay.get(assetBill.getAssetId())).orElse(Lists.newArrayList()));
                 expectSearchReq.setPaymentTime(DateUtils.addDays(assetBill.getPaymentTime(), ++count));
-            } while (enhance && count < Calendar.DAY_OF_WEEK && expectSearchRsps.isEmpty());
+            } while (Constant.ENHANCE_SWITCH && count < Calendar.DAY_OF_WEEK && expectSearchRsps.isEmpty());
 
             Collections.sort(expectSearchRsps);
-            billController.otherExpectBill.setText(JSON.toJSONStringWithDateFormat(expectSearchRsps, "yyyy-MM-dd", SerializerFeature.PrettyFormat));
+            billController.otherExpectBill.setText(JSON.toJSONStringWithDateFormat(expectSearchRsps, Constant.DATE_FORMAT, SerializerFeature.PrettyFormat));
 
         } finally {
             countDownLatch.countDown();
