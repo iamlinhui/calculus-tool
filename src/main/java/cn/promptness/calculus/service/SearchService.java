@@ -122,7 +122,7 @@ public class SearchService extends BaseService<Void> {
                 Map<String, List<RealSearchRsp>> stringListMap = platformFileService.searchCapitalRealRepay(realSearchReq);
                 inner.addAll(Optional.ofNullable(stringListMap.get(assetBill.getAssetId())).orElse(Lists.newArrayList()));
                 realSearchReq.setRealRepayDate(DateUtils.addDays(key, ++count));
-            } while (Constant.ENHANCE_SWITCH && count < Calendar.DAY_OF_WEEK && inner.isEmpty());
+            } while (Constant.ENHANCE_SWITCH.get() && count < Calendar.DAY_OF_WEEK && inner.isEmpty());
             return inner;
         } finally {
             innerCountDownLatch.countDown();
@@ -145,7 +145,7 @@ public class SearchService extends BaseService<Void> {
                 Map<String, List<ExpectSearchRsp>> capitalExpectRepay = platformFileService.searchCapitalExpectRepay(expectSearchReq);
                 expectSearchRsps.addAll(Optional.ofNullable(capitalExpectRepay.get(assetBill.getAssetId())).orElse(Lists.newArrayList()));
                 expectSearchReq.setPaymentTime(DateUtils.addDays(assetBill.getPaymentTime(), ++count));
-            } while (Constant.ENHANCE_SWITCH && count < Calendar.DAY_OF_WEEK && expectSearchRsps.isEmpty());
+            } while (Constant.ENHANCE_SWITCH.get() && count < Calendar.DAY_OF_WEEK && expectSearchRsps.isEmpty());
 
             Collections.sort(expectSearchRsps);
             billController.otherExpectBill.setText(JSON.toJSONStringWithDateFormat(expectSearchRsps, Constant.DATE_FORMAT, SerializerFeature.PrettyFormat));

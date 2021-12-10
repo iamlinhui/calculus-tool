@@ -1,16 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.TabPane?>
-<?import javafx.scene.layout.BorderPane?>
-<BorderPane fx:controller="cn.promptness.calculus.controller.MainController" maxHeight="-Infinity"
-            maxWidth="-Infinity"
-            minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8"
-            xmlns:fx="http://javafx.com/fxml/1">
-    <top>
-        <fx:include source="menu.fxml"/>
-    </top>
-    <center>
-        <TabPane fx:id="tabPane" prefWidth="650"/>
-    </center>
-</BorderPane>
+<?import javafx.scene.layout.*?>
+<VBox fx:controller="cn.promptness.calculus.controller.MainController" maxHeight="-Infinity"
+      maxWidth="-Infinity"
+      minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8"
+      xmlns:fx="http://javafx.com/fxml/1">
+    <children>
+        <HBox VBox.vgrow="NEVER">
+            <children>
+                <fx:include source="menu.fxml"/>
+            </children>
+            <padding>
+                <Insets/>
+            </padding>
+        </HBox>
+        <HBox VBox.vgrow="ALWAYS">
+            <children>
+                <TabPane fx:id="tabPane"/>
+            </children>
+            <padding>
+                <Insets/>
+            </padding>
+        </HBox>
+    </children>
+    <padding>
+        <Insets/>
+    </padding>
+</VBox>

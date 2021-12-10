@@ -7,7 +7,6 @@ import cn.promptness.calculus.service.ValidateUserService;
 import cn.promptness.calculus.utils.SpringFxmlLoader;
 import cn.promptness.calculus.utils.SystemTrayUtil;
 import cn.promptness.calculus.utils.TooltipUtil;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -45,6 +44,7 @@ public class MenuController {
         }).start();
     }
 
+    @FXML
     public void add() {
         mainController.addTab();
     }
@@ -106,7 +106,7 @@ public class MenuController {
         Alert alert = new Alert(Alert.AlertType.NONE);
         alert.setTitle(Constant.TITLE);
         alert.setHeaderText("使用说明");
-        alert.setContentText("1.打开MOA扫码登录\n2.输入资产号查询订单信息");
+        alert.setContentText("1.打开MOA扫码登录\n2.输入资产号查询订单信息\n3.增强开关:是否自动往后检索一周内的文件数据");
         alert.initOwner(SystemTrayUtil.getPrimaryStage());
         alert.getButtonTypes().add(ButtonType.CLOSE);
         alert.showAndWait();
@@ -125,11 +125,11 @@ public class MenuController {
 
     @FXML
     public void enhanceOn() {
-        Constant.ENHANCE_SWITCH = true;
+        Constant.ENHANCE_SWITCH.set(true);
     }
 
     @FXML
     public void enhanceOff() {
-        Constant.ENHANCE_SWITCH = false;
+        Constant.ENHANCE_SWITCH.set(false);
     }
 }
