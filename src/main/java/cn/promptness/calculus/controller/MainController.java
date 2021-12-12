@@ -31,7 +31,7 @@ public class MainController {
     }
 
     public void addTab() {
-        FXMLLoader loader = springFxmlLoader.getLoader("/fxml/bill.fxml");
+        FXMLLoader loader = springFxmlLoader.getLoader("/fxml/search.fxml");
         Parent load = springFxmlLoader.load(loader);
         Tab tab = new Tab("控制台", load);
         tabPane.getTabs().add(tab);

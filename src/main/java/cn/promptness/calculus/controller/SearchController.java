@@ -17,7 +17,7 @@ import javax.annotation.Resource;
 @Controller
 @Slf4j
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class BillController {
+public class SearchController {
 
     @FXML
     public TextField assetBillId;
@@ -37,7 +37,7 @@ public class BillController {
 
     @FXML
     public void search() {
-        SearchService searchService = applicationContext.getBean(SearchService.class).setBillController(this);
+        SearchService searchService = applicationContext.getBean(SearchService.class).setSearchController(this);
         ProgressUtil.of(SystemTrayUtil.getPrimaryStage(), searchService).show();
     }
 }

@@ -1,6 +1,6 @@
 package cn.promptness.calculus.service;
 
-import cn.promptness.calculus.controller.BillController;
+import cn.promptness.calculus.controller.SearchController;
 import cn.promptness.calculus.data.Constant;
 import cn.promptness.calculus.pojo.*;
 import com.alibaba.fastjson.JSON;
@@ -32,10 +32,10 @@ public class SearchService extends BaseService<Void> {
     @Resource
     private PlatformFileService platformFileService;
 
-    private BillController billController;
+    private SearchController searchController;
 
-    public SearchService setBillController(BillController billController) {
-        this.billController = billController;
+    public SearchService setSearchController(SearchController searchController) {
+        this.searchController = searchController;
         return this;
     }
 
@@ -44,10 +44,10 @@ public class SearchService extends BaseService<Void> {
         return new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                billController.ourBill.setText("");
-                billController.otherExpectBill.setText("");
-                billController.otherRealBill.setText("");
-                String assetId = billController.assetBillId.getText();
+                searchController.ourBill.setText("");
+                searchController.otherExpectBill.setText("");
+                searchController.otherRealBill.setText("");
+                String assetId = searchController.assetBillId.getText();
 
                 if (StringUtils.isEmpty(assetId)) {
                     return null;
@@ -61,7 +61,7 @@ public class SearchService extends BaseService<Void> {
                     return null;
                 }
                 Collections.sort(assetBillList);
-                billController.ourBill.setText(JSON.toJSONStringWithDateFormat(assetBillList, Constant.DATE_FORMAT, SerializerFeature.PrettyFormat));
+                searchController.ourBill.setText(JSON.toJSONStringWithDateFormat(assetBillList, Constant.DATE_FORMAT, SerializerFeature.PrettyFormat));
 
                 CountDownLatch countDownLatch = new CountDownLatch(2);
                 Constant.TASK_THREAD_POOL.execute(() -> getOtherExpectList(assetBillList, countDownLatch));
@@ -93,7 +93,7 @@ public class SearchService extends BaseService<Void> {
                 result.addAll(futureTask.get());
             }
             Collections.sort(result);
-            billController.otherRealBill.setText(JSON.toJSONStringWithDateFormat(result, Constant.DATE_FORMAT, SerializerFeature.PrettyFormat));
+            searchController.otherRealBill.setText(JSON.toJSONStringWithDateFormat(result, Constant.DATE_FORMAT, SerializerFeature.PrettyFormat));
 
         } finally {
             countDownLatch.countDown();
@@ -148,7 +148,7 @@ public class SearchService extends BaseService<Void> {
             } while (Constant.ENHANCE_SWITCH.get() && count < Calendar.DAY_OF_WEEK && expectSearchRsps.isEmpty());
 
             Collections.sort(expectSearchRsps);
-            billController.otherExpectBill.setText(JSON.toJSONStringWithDateFormat(expectSearchRsps, Constant.DATE_FORMAT, SerializerFeature.PrettyFormat));
+            searchController.otherExpectBill.setText(JSON.toJSONStringWithDateFormat(expectSearchRsps, Constant.DATE_FORMAT, SerializerFeature.PrettyFormat));
 
         } finally {
             countDownLatch.countDown();
