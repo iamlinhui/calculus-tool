@@ -1,6 +1,11 @@
 #pre
 # ciaapi.dszc-amc.com: 121.46.128.28
 # img1.fenqile.com: 81.71.125.133
+
 #pod
 ciaapi.dszc-amc.com: 119.29.165.139
 img1.fenqile.com: 106.55.220.16
+
+#stable
+#ciaapi.dszc-amc.com: 10.9.22.50
+#img1.fenqile.com: 10.9.22.119

@@ -51,6 +51,12 @@ public class LocalDbFileCache {
 
     @Value("${localDbFileCache.checkSecond:1}")
     private Long checkSecond;
+    @Value("${localDbFileDmp:/tmp/calculus/file.dmp}")
+    private String localDbFileDmp;
+    @Value("${needRemoveDmp:/tmp/calculus/remove.dmp}")
+    private String needRemoveDmp;
+    @Value("${localDbFileCountLimit:60}")
+    private Integer localDbFileCountLimit;
 
     /**
      * 任务分配线程池
@@ -64,13 +70,6 @@ public class LocalDbFileCache {
             new ThreadPoolExecutor.CallerRunsPolicy()
     );
 
-
-    @Value("${localDbFileDmp:/tmp/calculus/file.dmp}")
-    private String localDbFileDmp;
-    @Value("${localDbFileDmp:/tmp/calculus/remove.dmp}")
-    private String needRemoveDmp;
-    @Value("${localDbFileCountLimit:60}")
-    private Integer localDbFileCountLimit;
     @Resource
     private TaskScheduler taskScheduler;
 
