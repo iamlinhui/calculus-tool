@@ -11,7 +11,6 @@ import cn.promptness.calculus.utils.SpringFxmlLoader;
 import cn.promptness.calculus.utils.SystemTrayUtil;
 import cn.promptness.calculus.utils.TooltipUtil;
 import cn.promptness.httpclient.HttpClientProperties;
-import cn.promptness.httpclient.HttpClientUtil;
 import com.google.common.collect.ImmutableMap;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
@@ -42,6 +41,12 @@ public class MenuController {
     private SpringFxmlLoader springFxmlLoader;
     @Resource
     private MainController mainController;
+    @Resource
+    private LocalDbFileCache localDbFileCache;
+    @Resource
+    private ContinuationTask continuationTask;
+    @Resource
+    private HttpClientProperties httpClientProperties;
 
     public void initialize() {
         AccountCache.read();
@@ -140,51 +145,31 @@ public class MenuController {
         Constant.ENHANCE_SWITCH.set(false);
     }
 
-    @Resource
-    private LocalDbFileCache localDbFileCache;
-    @Resource
-    private ContinuationTask continuationTask;
-
     @FXML
     public void stable() {
-        localDbFileCache.cacheFileCatalogue();
-        localDbFileCache.cacheNeedRemove();
-        applicationContext.getEnvironment().getPropertySources().addFirst(new MapPropertySource("application", ImmutableMap.of("spring.profiles.active", "stable")));
-        applicationContext.publishEvent(new ConfigChangeEvent("spring.profiles.active"));
-        localDbFileCache.initFileCatalogue();
-        localDbFileCache.initNeedRemoveList();
-        httpClientProperties.setIpLabel("stable");
-        SystemTrayUtil.getPrimaryStage().setTitle(Constant.TITLE + "-测试环境");
-        continuationTask.continuation();
-
+        changeLabel("stable", "-测试环境");
     }
-
-    @Resource
-    private HttpClientProperties httpClientProperties;
 
     @FXML
     public void preRelease() {
-        localDbFileCache.cacheFileCatalogue();
-        localDbFileCache.cacheNeedRemove();
-        applicationContext.getEnvironment().getPropertySources().addFirst(new MapPropertySource("application", ImmutableMap.of("spring.profiles.active", "pre")));
-        applicationContext.publishEvent(new ConfigChangeEvent("spring.profiles.active"));
-        localDbFileCache.initFileCatalogue();
-        localDbFileCache.initNeedRemoveList();
-        httpClientProperties.setIpLabel("pre");
-        SystemTrayUtil.getPrimaryStage().setTitle(Constant.TITLE + "-预发布环境");
-        continuationTask.continuation();
+        changeLabel("pre", "-预发布环境");
     }
 
     @FXML
     public void product() {
+        changeLabel("pod", "-生产环境");
+    }
+
+    private void changeLabel(String label, String description) {
         localDbFileCache.cacheFileCatalogue();
         localDbFileCache.cacheNeedRemove();
-        applicationContext.getEnvironment().getPropertySources().addFirst(new MapPropertySource("application", ImmutableMap.of("spring.profiles.active", "pod")));
+        applicationContext.getEnvironment().getPropertySources().addFirst(new MapPropertySource("application", ImmutableMap.of("spring.profiles.active", label)));
         applicationContext.publishEvent(new ConfigChangeEvent("spring.profiles.active"));
         localDbFileCache.initFileCatalogue();
         localDbFileCache.initNeedRemoveList();
-        httpClientProperties.setIpLabel("pod");
-        SystemTrayUtil.getPrimaryStage().setTitle(Constant.TITLE + "-生产环境");
+        httpClientProperties.setIpLabel(label);
+        SystemTrayUtil.getPrimaryStage().setTitle(Constant.TITLE + description);
         continuationTask.continuation();
     }
+
 }
