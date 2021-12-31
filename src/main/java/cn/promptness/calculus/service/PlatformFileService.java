@@ -40,7 +40,7 @@ public class PlatformFileService {
     @Resource
     private AssetBillService assetBillService;
 
-    @Value("${baseTempPath:/tmp/calculus/file}")
+    @Value("${baseTempPath:../calculus/${spring.profiles.active}/file}")
     private String baseTempPath;
     @Value("${downloadHost:https://img1.fenqile.com}")
     private String downloadHost;

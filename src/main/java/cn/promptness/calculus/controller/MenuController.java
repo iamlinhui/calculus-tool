@@ -1,12 +1,18 @@
 package cn.promptness.calculus.controller;
 
 import cn.promptness.calculus.cache.AccountCache;
+import cn.promptness.calculus.cache.LocalDbFileCache;
+import cn.promptness.calculus.config.change.ConfigChangeEvent;
 import cn.promptness.calculus.data.Constant;
 import cn.promptness.calculus.service.CheckLoginService;
 import cn.promptness.calculus.service.ValidateUserService;
+import cn.promptness.calculus.task.ContinuationTask;
 import cn.promptness.calculus.utils.SpringFxmlLoader;
 import cn.promptness.calculus.utils.SystemTrayUtil;
 import cn.promptness.calculus.utils.TooltipUtil;
+import cn.promptness.httpclient.HttpClientProperties;
+import cn.promptness.httpclient.HttpClientUtil;
+import com.google.common.collect.ImmutableMap;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -18,6 +24,7 @@ import javafx.scene.image.Image;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.core.env.MapPropertySource;
 import org.springframework.stereotype.Controller;
 
 import javax.annotation.Resource;
@@ -131,5 +138,53 @@ public class MenuController {
     @FXML
     public void enhanceOff() {
         Constant.ENHANCE_SWITCH.set(false);
+    }
+
+    @Resource
+    private LocalDbFileCache localDbFileCache;
+    @Resource
+    private ContinuationTask continuationTask;
+
+    @FXML
+    public void stable() {
+        localDbFileCache.cacheFileCatalogue();
+        localDbFileCache.cacheNeedRemove();
+        applicationContext.getEnvironment().getPropertySources().addFirst(new MapPropertySource("application", ImmutableMap.of("spring.profiles.active", "stable")));
+        applicationContext.publishEvent(new ConfigChangeEvent("spring.profiles.active"));
+        localDbFileCache.initFileCatalogue();
+        localDbFileCache.initNeedRemoveList();
+        httpClientProperties.setIpLabel("stable");
+        SystemTrayUtil.getPrimaryStage().setTitle(Constant.TITLE + "-测试环境");
+        continuationTask.continuation();
+
+    }
+
+    @Resource
+    private HttpClientProperties httpClientProperties;
+
+    @FXML
+    public void preRelease() {
+        localDbFileCache.cacheFileCatalogue();
+        localDbFileCache.cacheNeedRemove();
+        applicationContext.getEnvironment().getPropertySources().addFirst(new MapPropertySource("application", ImmutableMap.of("spring.profiles.active", "pre")));
+        applicationContext.publishEvent(new ConfigChangeEvent("spring.profiles.active"));
+        localDbFileCache.initFileCatalogue();
+        localDbFileCache.initNeedRemoveList();
+        httpClientProperties.setIpLabel("pre");
+        SystemTrayUtil.getPrimaryStage().setTitle(Constant.TITLE + "-预发布环境");
+        continuationTask.continuation();
+    }
+
+    @FXML
+    public void product() {
+        localDbFileCache.cacheFileCatalogue();
+        localDbFileCache.cacheNeedRemove();
+        applicationContext.getEnvironment().getPropertySources().addFirst(new MapPropertySource("application", ImmutableMap.of("spring.profiles.active", "pod")));
+        applicationContext.publishEvent(new ConfigChangeEvent("spring.profiles.active"));
+        localDbFileCache.initFileCatalogue();
+        localDbFileCache.initNeedRemoveList();
+        httpClientProperties.setIpLabel("pod");
+        SystemTrayUtil.getPrimaryStage().setTitle(Constant.TITLE + "-生产环境");
+        continuationTask.continuation();
     }
 }

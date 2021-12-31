@@ -17,6 +17,14 @@
             <RadioMenuItem toggleGroup="$enhanceToggleGroup" text="开启" onAction="#enhanceOn"/>
             <RadioMenuItem toggleGroup="$enhanceToggleGroup" text="关闭" onAction="#enhanceOff" selected="true"/>
         </Menu>
+        <Menu text="环境">
+            <fx:define>
+                <ToggleGroup fx:id="environmentToggleGroup"/>
+            </fx:define>
+            <RadioMenuItem toggleGroup="$environmentToggleGroup" text="测试环境" onAction="#stable"/>
+            <RadioMenuItem toggleGroup="$environmentToggleGroup" text="预发布" onAction="#preRelease"/>
+            <RadioMenuItem toggleGroup="$environmentToggleGroup" text="线上环境" onAction="#product" selected="true"/>
+        </Menu>
     </Menu>
     <Menu text="账户" fx:id="accountTitle">
         <MenuItem text="登录" onAction="#account" fx:id="accountAction"/>

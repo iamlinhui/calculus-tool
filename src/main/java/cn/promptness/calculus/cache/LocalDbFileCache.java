@@ -1,5 +1,6 @@
 package cn.promptness.calculus.cache;
 
+import cn.promptness.calculus.config.change.ConfigChangeEvent;
 import cn.promptness.calculus.enums.FileRecordTypeEnum;
 import cn.promptness.calculus.pojo.LocalDbFile;
 import com.alibaba.fastjson.JSON;
@@ -10,6 +11,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.event.EventListener;
 import org.springframework.retry.RetryCallback;
 import org.springframework.retry.backoff.FixedBackOffPolicy;
 import org.springframework.retry.policy.SimpleRetryPolicy;
@@ -49,13 +51,13 @@ public class LocalDbFileCache {
     private static final Integer CORE_SIZE = Runtime.getRuntime().availableProcessors();
 
 
-    @Value("${localDbFileCache.checkSecond:1}")
+    @Value("${localDbFileCache.checkSecond:60}")
     private Long checkSecond;
-    @Value("${localDbFileDmp:/tmp/calculus/file.dmp}")
+    @Value("${localDbFileDmp:../calculus/${spring.profiles.active}/file.dmp}")
     private String localDbFileDmp;
-    @Value("${needRemoveDmp:/tmp/calculus/remove.dmp}")
+    @Value("${needRemoveDmp:../calculus/${spring.profiles.active}/remove.dmp}")
     private String needRemoveDmp;
-    @Value("${localDbFileCountLimit:60}")
+    @Value("${localDbFileCountLimit:1000}")
     private Integer localDbFileCountLimit;
 
     /**
@@ -80,6 +82,7 @@ public class LocalDbFileCache {
 
     @PostConstruct
     public void initNeedRemoveList() {
+        needRemoveList.clear();
         File dmpFile = new File(needRemoveDmp);
         if (!dmpFile.exists()) {
             return;
@@ -98,6 +101,7 @@ public class LocalDbFileCache {
 
     @PostConstruct
     public void initFileCatalogue() {
+        localDbFileTable.clear();
         File dmpFile = new File(localDbFileDmp);
         if (!dmpFile.exists()) {
             return;

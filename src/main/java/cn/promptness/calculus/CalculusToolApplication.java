@@ -48,7 +48,7 @@ public class CalculusToolApplication extends Application implements ApplicationL
         Scene scene = new Scene(root);
         scene.setFill(Color.TRANSPARENT);
         scene.getStylesheets().add(Style.LIGHT.getStyleStylesheetURL());
-        primaryStage.setTitle(Constant.TITLE);
+        SystemTrayUtil.getPrimaryStage().setTitle(Constant.TITLE + "-生产环境");
         primaryStage.getIcons().add(new Image("/icon.png"));
         primaryStage.setScene(scene);
         primaryStage.setResizable(false);
