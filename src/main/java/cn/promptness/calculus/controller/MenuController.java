@@ -4,6 +4,7 @@ import cn.promptness.calculus.cache.AccountCache;
 import cn.promptness.calculus.cache.LocalDbFileCache;
 import cn.promptness.calculus.config.change.ConfigChangeEvent;
 import cn.promptness.calculus.data.Constant;
+import cn.promptness.calculus.enums.EnvironmentEnum;
 import cn.promptness.calculus.service.CheckLoginService;
 import cn.promptness.calculus.service.ValidateUserService;
 import cn.promptness.calculus.task.ContinuationTask;
@@ -147,28 +148,28 @@ public class MenuController {
 
     @FXML
     public void stable() {
-        changeLabel("stable", "-测试环境");
+        changeLabel(EnvironmentEnum.STABLE);
     }
 
     @FXML
     public void preRelease() {
-        changeLabel("pre", "-预发布环境");
+        changeLabel(EnvironmentEnum.PRE);
     }
 
     @FXML
     public void product() {
-        changeLabel("pod", "-生产环境");
+        changeLabel(EnvironmentEnum.POD);
     }
 
-    private void changeLabel(String label, String description) {
+    private void changeLabel(EnvironmentEnum environmentEnum) {
         localDbFileCache.cacheFileCatalogue();
         localDbFileCache.cacheNeedRemove();
-        applicationContext.getEnvironment().getPropertySources().addFirst(new MapPropertySource("application", ImmutableMap.of("spring.profiles.active", label)));
+        applicationContext.getEnvironment().getPropertySources().addFirst(new MapPropertySource("application", ImmutableMap.of("spring.profiles.active", environmentEnum.getLabel())));
         applicationContext.publishEvent(new ConfigChangeEvent("spring.profiles.active"));
         localDbFileCache.initFileCatalogue();
         localDbFileCache.initNeedRemoveList();
-        httpClientProperties.setIpLabel(label);
-        SystemTrayUtil.getPrimaryStage().setTitle(Constant.TITLE + description);
+        httpClientProperties.setIpLabel(environmentEnum.getLabel());
+        SystemTrayUtil.getPrimaryStage().setTitle(environmentEnum.getDesc());
         continuationTask.continuation();
     }
 

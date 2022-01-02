@@ -23,9 +23,9 @@ public enum FileRecordTypeEnum implements BaseEnum {
     }
 
 
-    int code;
+    final int code;
 
-    String desc;
+    final String desc;
 
 
     @Override

@@ -2,6 +2,7 @@ package cn.promptness.calculus;
 
 import cn.promptness.calculus.cache.AccountCache;
 import cn.promptness.calculus.data.Constant;
+import cn.promptness.calculus.enums.EnvironmentEnum;
 import cn.promptness.calculus.utils.SpringFxmlLoader;
 import cn.promptness.calculus.utils.SystemTrayUtil;
 import javafx.application.Application;
@@ -48,7 +49,7 @@ public class CalculusToolApplication extends Application implements ApplicationL
         Scene scene = new Scene(root);
         scene.setFill(Color.TRANSPARENT);
         scene.getStylesheets().add(Style.LIGHT.getStyleStylesheetURL());
-        SystemTrayUtil.getPrimaryStage().setTitle(Constant.TITLE + "-生产环境");
+        SystemTrayUtil.getPrimaryStage().setTitle(EnvironmentEnum.POD.getDesc());
         primaryStage.getIcons().add(new Image("/icon.png"));
         primaryStage.setScene(scene);
         primaryStage.setResizable(false);
