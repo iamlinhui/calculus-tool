@@ -9,7 +9,6 @@ import cn.promptness.httpclient.HttpClientUtil;
 import cn.promptness.httpclient.HttpResult;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
-import com.alibaba.fastjson.annotation.JSONField;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.DateFormatUtils;
