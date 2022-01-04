@@ -65,10 +65,7 @@ public class PlatformFileService {
 
             LocalDbFile newLocalDbFile = buildLocalDbFile(fileDirectory, expectSearch.getLoanChannel(), expectSearch.getPaymentTime(), FileRecordTypeEnum.EXPECT);
             Map<String, List<ExpectSearchRsp>> resultMap = searchByRemoteFile(newLocalDbFile, fileRecord, fileDirectory,
-                    line -> {
-                        String[] contentList = StringUtils.delimitedListToStringArray(line, "|");
-                        return contentList[6] + "-" + contentList[13];
-                    },
+                    this::getLineKey,
                     () -> getExpectKey(expectSearch),
                     this::buildExpectResult
             );
@@ -101,10 +98,7 @@ public class PlatformFileService {
             LocalDbFile newLocalDbFile = buildLocalDbFile(fileDirectory, realSearchReq.getLoanChannel(), realSearchReq.getRealRepayDate(), FileRecordTypeEnum.REAL);
 
             Map<String, List<RealSearchRsp>> resultMap = searchByRemoteFile(newLocalDbFile, fileRecord, fileDirectory,
-                    line -> {
-                        String[] contentList = StringUtils.delimitedListToStringArray(line, "|");
-                        return contentList[6] + "-" + contentList[13];
-                    },
+                    this::getLineKey,
                     () -> getRealKey(realSearchReq),
                     this::buildRealResult
             );
@@ -155,37 +149,19 @@ public class PlatformFileService {
         return DateUtils.parseDate(value, new String[]{"yyyy-MM-dd"});
     }
 
-    private Map<String, List<RealSearchRsp>> buildRealResult(List<byte[]> resultList) {
-        Map<String, List<RealSearchRsp>> realSearchRspMap = Maps.newHashMap();
+    private String getLineKey(String line) {
+        String[] contentList = StringUtils.delimitedListToStringArray(line, "|");
+        return contentList[6] + "-" + contentList[13];
+    }
 
-        for (byte[] result : resultList) {
-            if (result == null) {
-                continue;
+    private List<byte[]> getExpectKey(ExpectSearchReq expectSearch) {
+        List<byte[]> keyList = Lists.newArrayList();
+        for (ExpectSearchReq.ExpectSearchParam expectSearchParam : expectSearch.getExpectSearchParamList()) {
+            for (int i = 1; i <= expectSearchParam.getLoanTerm(); i++) {
+                keyList.add((expectSearchParam.getAssetId() + "-" + i).getBytes());
             }
-            String[] resultLine = StringUtils.delimitedListToStringArray(new String(result), "|");
-
-            RealSearchRsp realSearchRsp = new RealSearchRsp();
-            realSearchRsp.setLoanChannelId(stringToInt(resultLine[1]));
-            realSearchRsp.setRealRepayDate(stringToDate(resultLine[3]));
-            realSearchRsp.setAssetId(resultLine[6]);
-
-            realSearchRsp.setRepayTerm(stringToInt(resultLine[13]));
-            realSearchRsp.setRealRepayAmount(stringToLong(resultLine[14]));
-            realSearchRsp.setRealRepayPrincipal(stringToLong(resultLine[15]));
-            realSearchRsp.setRealRepayFee(stringToLong(resultLine[16]));
-
-            realSearchRsp.setRealRepayMulct(stringToLong(resultLine[20]));
-            realSearchRsp.setRealRepayType(stringToInt(resultLine[21]));
-
-            realSearchRspMap.compute(resultLine[6], (key, value) -> {
-                if (value == null) {
-                    value = Lists.newArrayList();
-                }
-                value.add(realSearchRsp);
-                return value;
-            });
         }
-        return realSearchRspMap;
+        return keyList;
     }
 
     private List<byte[]> getRealKey(RealSearchReq realSearchReq) {
@@ -228,14 +204,38 @@ public class PlatformFileService {
         return expectSearchRspMap;
     }
 
-    private List<byte[]> getExpectKey(ExpectSearchReq expectSearch) {
-        List<byte[]> keyList = Lists.newArrayList();
-        for (ExpectSearchReq.ExpectSearchParam expectSearchParam : expectSearch.getExpectSearchParamList()) {
-            for (int i = 1; i <= expectSearchParam.getLoanTerm(); i++) {
-                keyList.add((expectSearchParam.getAssetId() + "-" + i).getBytes());
+
+    private Map<String, List<RealSearchRsp>> buildRealResult(List<byte[]> resultList) {
+        Map<String, List<RealSearchRsp>> realSearchRspMap = Maps.newHashMap();
+
+        for (byte[] result : resultList) {
+            if (result == null) {
+                continue;
             }
+            String[] resultLine = StringUtils.delimitedListToStringArray(new String(result), "|");
+
+            RealSearchRsp realSearchRsp = new RealSearchRsp();
+            realSearchRsp.setLoanChannelId(stringToInt(resultLine[1]));
+            realSearchRsp.setRealRepayDate(stringToDate(resultLine[3]));
+            realSearchRsp.setAssetId(resultLine[6]);
+
+            realSearchRsp.setRepayTerm(stringToInt(resultLine[13]));
+            realSearchRsp.setRealRepayAmount(stringToLong(resultLine[14]));
+            realSearchRsp.setRealRepayPrincipal(stringToLong(resultLine[15]));
+            realSearchRsp.setRealRepayFee(stringToLong(resultLine[16]));
+
+            realSearchRsp.setRealRepayMulct(stringToLong(resultLine[20]));
+            realSearchRsp.setRealRepayType(stringToInt(resultLine[21]));
+
+            realSearchRspMap.compute(resultLine[6], (key, value) -> {
+                if (value == null) {
+                    value = Lists.newArrayList();
+                }
+                value.add(realSearchRsp);
+                return value;
+            });
         }
-        return keyList;
+        return realSearchRspMap;
     }
 
 
