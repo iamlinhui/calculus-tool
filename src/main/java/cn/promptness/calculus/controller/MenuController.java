@@ -169,7 +169,7 @@ public class MenuController {
         localDbFileCache.initFileCatalogue();
         localDbFileCache.initNeedRemoveList();
         httpClientProperties.setIpLabel(environmentEnum.getLabel());
-        SystemTrayUtil.getPrimaryStage().setTitle(environmentEnum.getDesc());
+        SystemTrayUtil.getPrimaryStage().setTitle(environmentEnum.getFullDesc());
         continuationTask.continuation();
     }
 

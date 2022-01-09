@@ -28,11 +28,24 @@ public enum EnvironmentEnum{
 
     final String desc;
 
+    public static EnvironmentEnum getInstance(String activeProfiles) {
+        for (EnvironmentEnum environmentEnum : EnvironmentEnum.values()) {
+            if (environmentEnum.getLabel().equals(activeProfiles)) {
+                return environmentEnum;
+            }
+        }
+        throw new RuntimeException("ERROR PROFILE");
+    }
+
     public String getLabel() {
         return label;
     }
 
-    public String getDesc() {
+    public String getFullDesc() {
         return String.format("%s-%s", Constant.TITLE, desc);
+    }
+
+    public String getDesc() {
+        return desc;
     }
 }

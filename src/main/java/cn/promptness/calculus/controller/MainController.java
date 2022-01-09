@@ -1,5 +1,6 @@
 package cn.promptness.calculus.controller;
 
+import cn.promptness.calculus.enums.EnvironmentEnum;
 import cn.promptness.calculus.utils.SpringFxmlLoader;
 import cn.promptness.calculus.utils.SystemTrayUtil;
 import com.sun.javafx.scene.control.behavior.TabPaneBehavior;
@@ -12,6 +13,7 @@ import javafx.scene.control.TabPane;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Controller;
 
@@ -22,6 +24,8 @@ public class MainController {
 
     @Resource
     private SpringFxmlLoader springFxmlLoader;
+    @Value("${spring.profiles.active}")
+    private String activeProfiles;
 
     @FXML
     public TabPane tabPane;
@@ -33,7 +37,7 @@ public class MainController {
     public void addTab() {
         FXMLLoader loader = springFxmlLoader.getLoader("/fxml/search.fxml");
         Parent load = springFxmlLoader.load(loader);
-        Tab tab = new Tab("控制台", load);
+        Tab tab = new Tab(EnvironmentEnum.getInstance(activeProfiles).getDesc(), load);
         tabPane.getTabs().add(tab);
         tabPane.getSelectionModel().select(tab);
         tab.setOnClosed(event -> tabPane.setTabClosingPolicy(tabPane.getTabs().size() == 1 ? TabPane.TabClosingPolicy.UNAVAILABLE : TabPane.TabClosingPolicy.SELECTED_TAB));

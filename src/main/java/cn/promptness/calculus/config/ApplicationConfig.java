@@ -11,13 +11,16 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class ApplicationConfig {
 
+    @Value("${spring.profiles.active}")
+    private String activeProfiles;
+
     @Bean
     public HttpClientUtil httpClientUtil(HttpClientProperties properties) {
         return new HttpClientUtil(properties);
     }
 
     @Bean
-    public HttpClientProperties httpClientProperties(@Value("${spring.profiles.active}") String activeProfiles) {
+    public HttpClientProperties httpClientProperties() {
         HttpClientProperties properties = new HttpClientProperties();
         properties.setAgent(Constant.USER_AGENT);
         properties.setIpLabel(activeProfiles);
