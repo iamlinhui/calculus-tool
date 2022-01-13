@@ -28,6 +28,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 @Service
 @Slf4j
@@ -44,6 +45,9 @@ public class PlatformFileService {
     private String baseTempPath;
     @Value("${downloadHost:https://img1.fenqile.com}")
     private String downloadHost;
+
+    private static final String REGEX_FLOAT = "^[-+]?([0-9]+)([.]([0-9]+))?$";
+    private static final Pattern PATTERN = Pattern.compile(REGEX_FLOAT);
 
     @SneakyThrows
     public Map<String, List<ExpectSearchRsp>> searchCapitalExpectRepay(ExpectSearchReq expectSearch) {
@@ -126,9 +130,7 @@ public class PlatformFileService {
         if (StringUtils.isEmpty(value)) {
             return 0L;
         }
-        for (char charExpression : value.toCharArray()) {
-            Assert.isTrue(Character.isDigit(charExpression) || charExpression == '.', "数值类型转换异常" + value);
-        }
+        Assert.isTrue(PATTERN.matcher(value).matches(), "数值类型转换异常" + value);
         return Long.valueOf(value);
     }
 
@@ -136,9 +138,7 @@ public class PlatformFileService {
         if (StringUtils.isEmpty(value)) {
             return 0;
         }
-        for (char charExpression : value.toCharArray()) {
-            Assert.isTrue(Character.isDigit(charExpression) || charExpression == '.', "数值类型转换异常" + value);
-        }
+        Assert.isTrue(PATTERN.matcher(value).matches(), "数值类型转换异常" + value);
         return Integer.valueOf(value);
     }
 
