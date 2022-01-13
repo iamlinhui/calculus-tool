@@ -130,7 +130,7 @@ public class PlatformFileService {
         if (StringUtils.isEmpty(value)) {
             return 0L;
         }
-        Assert.isTrue(PATTERN.matcher(value).matches(), "数值类型转换异常" + value);
+        Assert.isTrue(PATTERN.matcher(value).matches(), "数值类型转换异常:" + value);
         return Long.valueOf(value);
     }
 
@@ -138,7 +138,7 @@ public class PlatformFileService {
         if (StringUtils.isEmpty(value)) {
             return 0;
         }
-        Assert.isTrue(PATTERN.matcher(value).matches(), "数值类型转换异常" + value);
+        Assert.isTrue(PATTERN.matcher(value).matches(), "数值类型转换异常:" + value);
         return Integer.valueOf(value);
     }
 

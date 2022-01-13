@@ -7,7 +7,6 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.google.common.collect.Lists;
 import javafx.concurrent.Task;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -18,7 +17,7 @@ import org.springframework.util.StringUtils;
 import javax.annotation.Resource;
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.FutureTask;
+import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -72,29 +71,27 @@ public class SearchService extends BaseService<Void> {
         };
     }
 
-    @SneakyThrows
     private void getOtherRealList(List<AssetBill> assetBillList, CountDownLatch countDownLatch) {
         try {
             AssetBill assetBill = assetBillList.get(0);
             Map<Date, List<AssetBill>> collect = assetBillList.stream().filter(x -> !Objects.equals("UNREPAY", x.getRealRepayType())).collect(Collectors.groupingBy(AssetBill::getRealRepayDate));
 
             CountDownLatch innerCountDownLatch = new CountDownLatch(collect.size());
-            List<FutureTask<List<RealSearchRsp>>> futureTaskList = Lists.newArrayList();
+            List<Future<List<RealSearchRsp>>> futureTaskList = Lists.newArrayList();
             for (Map.Entry<Date, List<AssetBill>> dateListEntry : collect.entrySet()) {
                 Date key = dateListEntry.getKey();
-                FutureTask<List<RealSearchRsp>> futureTask = new FutureTask<>(() -> getSingleRealSearchResponse(assetBill, key, innerCountDownLatch));
-                futureTaskList.add(futureTask);
-                Constant.SUB_TASK_THREAD_POOL.execute(futureTask);
+                futureTaskList.add(Constant.SUB_TASK_THREAD_POOL.submit(() -> getSingleRealSearchResponse(assetBill, key, innerCountDownLatch)));
             }
             innerCountDownLatch.await();
 
             List<RealSearchRsp> result = Lists.newArrayList();
-            for (FutureTask<List<RealSearchRsp>> futureTask : futureTaskList) {
+            for (Future<List<RealSearchRsp>> futureTask : futureTaskList) {
                 result.addAll(futureTask.get());
             }
             Collections.sort(result);
             searchController.otherRealBill.setText(JSON.toJSONStringWithDateFormat(result, Constant.DATE_FORMAT, SerializerFeature.PrettyFormat));
-
+        } catch (Exception e) {
+            searchController.otherRealBill.setText(e.getMessage());
         } finally {
             countDownLatch.countDown();
         }
@@ -150,6 +147,8 @@ public class SearchService extends BaseService<Void> {
             Collections.sort(expectSearchRsps);
             searchController.otherExpectBill.setText(JSON.toJSONStringWithDateFormat(expectSearchRsps, Constant.DATE_FORMAT, SerializerFeature.PrettyFormat));
 
+        } catch (Exception e) {
+            searchController.otherExpectBill.setText(e.getMessage());
         } finally {
             countDownLatch.countDown();
         }
