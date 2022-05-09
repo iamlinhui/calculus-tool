@@ -7,7 +7,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -24,7 +28,7 @@ public class AccountCache {
     public static void read() {
         File account = new File(ACCOUNT_FILE);
         if (account.exists()) {
-            try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(account))) {
+            try (ObjectInputStream ois = new ObjectInputStream(Files.newInputStream(account.toPath()))) {
                 Object object;
                 while ((object = ois.readObject()) != null) {
                     BasicClientCookie2 cookie = (BasicClientCookie2) object;
@@ -38,7 +42,7 @@ public class AccountCache {
 
     public static void cache() {
         File account = new File(ACCOUNT_FILE);
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(account))) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(Files.newOutputStream(account.toPath()))) {
             for (Map.Entry<String, String> entry : HEADER_MAP.entrySet()) {
                 BasicClientCookie2 cookie = new BasicClientCookie2(entry.getKey(), entry.getValue());
                 oos.writeObject(cookie);

@@ -1,6 +1,5 @@
 package cn.promptness.calculus.cache;
 
-import cn.promptness.calculus.config.change.ConfigChangeEvent;
 import cn.promptness.calculus.enums.FileRecordTypeEnum;
 import cn.promptness.calculus.pojo.LocalDbFile;
 import com.alibaba.fastjson.JSON;
@@ -11,7 +10,6 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.event.EventListener;
 import org.springframework.retry.RetryCallback;
 import org.springframework.retry.backoff.FixedBackOffPolicy;
 import org.springframework.retry.policy.SimpleRetryPolicy;
@@ -25,6 +23,7 @@ import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -87,7 +86,7 @@ public class LocalDbFileCache {
         if (!dmpFile.exists()) {
             return;
         }
-        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(dmpFile))) {
+        try (ObjectInputStream ois = new ObjectInputStream(Files.newInputStream(dmpFile.toPath()))) {
             Object object;
             while ((object = ois.readObject()) != null) {
                 LocalDbFile localDbFile = (LocalDbFile) object;
@@ -108,7 +107,7 @@ public class LocalDbFileCache {
         }
         try {
             lock.writeLock().lock();
-            try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(dmpFile))) {
+            try (ObjectInputStream ois = new ObjectInputStream(Files.newInputStream(dmpFile.toPath()))) {
                 Object object;
                 while ((object = ois.readObject()) != null) {
                     LocalDbFile localDbFile = (LocalDbFile) object;
@@ -128,7 +127,7 @@ public class LocalDbFileCache {
         try {
             lock.readLock().lock();
             File dmpFile = new File(localDbFileDmp);
-            try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(dmpFile))) {
+            try (ObjectOutputStream oos = new ObjectOutputStream(Files.newOutputStream(dmpFile.toPath()))) {
                 for (LocalDbFile localDbFile : localDbFileTable.values()) {
                     oos.writeObject(localDbFile);
                 }
@@ -145,7 +144,7 @@ public class LocalDbFileCache {
     @PreDestroy
     public void cacheNeedRemove() {
         File dmpFile = new File(needRemoveDmp);
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(dmpFile))) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(Files.newOutputStream(dmpFile.toPath()))) {
             for (LocalDbFile localDbFile : needRemoveList) {
                 oos.writeObject(localDbFile);
             }
