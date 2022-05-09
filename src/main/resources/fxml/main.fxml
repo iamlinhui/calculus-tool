@@ -8,25 +8,19 @@
       maxWidth="-Infinity"
       minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8"
       xmlns:fx="http://javafx.com/fxml/1">
-    <children>
-        <HBox VBox.vgrow="NEVER">
-            <children>
-                <fx:include source="menu.fxml"/>
-            </children>
-            <padding>
-                <Insets/>
-            </padding>
-        </HBox>
-        <HBox VBox.vgrow="ALWAYS">
-            <children>
-                <TabPane fx:id="tabPane"/>
-            </children>
-            <padding>
-                <Insets/>
-            </padding>
-        </HBox>
-    </children>
     <padding>
         <Insets/>
     </padding>
+    <HBox VBox.vgrow="NEVER">
+        <padding>
+            <Insets/>
+        </padding>
+        <fx:include source="menu.fxml" HBox.hgrow="ALWAYS"/>
+    </HBox>
+    <HBox VBox.vgrow="ALWAYS">
+        <padding>
+            <Insets/>
+        </padding>
+        <TabPane fx:id="tabPane" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS"/>
+    </HBox>
 </VBox>

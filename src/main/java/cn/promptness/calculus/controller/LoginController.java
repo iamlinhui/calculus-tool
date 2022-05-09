@@ -6,11 +6,13 @@ import javafx.fxml.FXML;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.http.message.BasicHeader;
 import org.springframework.stereotype.Controller;
 
 import javax.annotation.Resource;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.util.Collections;
 
 @Controller
 public class LoginController {
@@ -26,7 +28,8 @@ public class LoginController {
         token = DigestUtils.md5Hex(currentTimeMillis);
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         try {
-            HttpResult httpResult = httpClientUtil.doGet("https://passport.oa.fenqile.com/user/main/qrcode.png?token=" + getToken(), byteArrayOutputStream);
+            // fix 2022/5/9 增加Referer
+            HttpResult httpResult = httpClientUtil.doGet("https://passport.oa.fenqile.com/user/main/qrcode.png?token=" + getToken(), byteArrayOutputStream, Collections.singletonList(new BasicHeader("Referer", "https://passport.oa.fenqile.com/")));
             codeSuccess = httpResult.isSuccess();
             codeImageView.setImage(new Image(new ByteArrayInputStream(byteArrayOutputStream.toByteArray())));
         } catch (Exception e) {

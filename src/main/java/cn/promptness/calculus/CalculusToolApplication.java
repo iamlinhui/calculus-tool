@@ -30,7 +30,6 @@ public class CalculusToolApplication extends Application implements ApplicationL
     private ConfigurableApplicationContext applicationContext;
 
     public static void main(String[] args) {
-        System.setProperty("java.awt.headless", "false");
         if (!SystemTray.isSupported()) {
             System.exit(1);
         }
