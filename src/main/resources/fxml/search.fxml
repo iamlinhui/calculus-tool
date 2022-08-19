@@ -12,24 +12,24 @@
         </padding>
 
         <Label text="资产号:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-        <HBox spacing="5" GridPane.columnIndex="1" GridPane.columnSpan="1" GridPane.rowIndex="0">
-            <TextField fx:id="assetBillId" prefHeight="32"  prefWidth="470" HBox.hgrow="ALWAYS"/>
-            <Button prefHeight="32" prefWidth="80" onAction="#search" HBox.hgrow="ALWAYS">查询</Button>
+        <HBox spacing="5" GridPane.columnIndex="1" GridPane.columnSpan="1" GridPane.rowIndex="0" VBox.vgrow="ALWAYS">
+            <TextField fx:id="assetBillId" prefHeight="32" prefWidth="470" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS"/>
+            <Button prefHeight="32" prefWidth="80" onAction="#search">查询</Button>
         </HBox>
 
         <Label text="我方账单:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-        <HBox GridPane.columnIndex="1" GridPane.columnSpan="1" GridPane.rowIndex="1">
-            <TextArea fx:id="ourBill" HBox.hgrow="ALWAYS"/>
+        <HBox GridPane.columnIndex="1" GridPane.columnSpan="1" GridPane.rowIndex="1" VBox.vgrow="ALWAYS">
+            <TextArea fx:id="ourBill" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS"/>
         </HBox>
 
         <Label text="资方预计:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
-        <HBox GridPane.columnIndex="1" GridPane.columnSpan="1" GridPane.rowIndex="2">
-            <TextArea fx:id="otherExpectBill" HBox.hgrow="ALWAYS"/>
+        <HBox GridPane.columnIndex="1" GridPane.columnSpan="1" GridPane.rowIndex="2" VBox.vgrow="ALWAYS">
+            <TextArea fx:id="otherExpectBill" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS"/>
         </HBox>
 
         <Label text="资方实还:" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
-        <HBox GridPane.columnIndex="1" GridPane.columnSpan="1" GridPane.rowIndex="3">
-            <TextArea fx:id="otherRealBill" HBox.hgrow="ALWAYS"/>
+        <HBox GridPane.columnIndex="1" GridPane.columnSpan="1" GridPane.rowIndex="3" VBox.vgrow="ALWAYS">
+            <TextArea fx:id="otherRealBill" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS"/>
         </HBox>
     </GridPane>
 </Pane>

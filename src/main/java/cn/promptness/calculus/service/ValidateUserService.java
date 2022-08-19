@@ -35,7 +35,7 @@ public class ValidateUserService extends BaseService<String> {
                 if (!AccountCache.haveAccount()) {
                     return null;
                 }
-                HttpResult httpResult = httpClientUtil.doGet("https://api.oa.fenqile.com/oa/api/user/session.json?resource_sn=NEWAPR_OA", AccountCache.getHeaderList());
+                HttpResult httpResult = httpClientUtil.doGet("https://openmoa.oa.fenqile.com/oa/api/user/session.json?resource_sn=LECO", AccountCache.getHeaderList());
                 FenqileResponse<Session> response = httpResult.getContent(new TypeToken<FenqileResponse<Session>>() {}.getType());
                 if (response.isSuccess()) {
                     return response.getResult().stream().findFirst().orElse(new Session()).getName();

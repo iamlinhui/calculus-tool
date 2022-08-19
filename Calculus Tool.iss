@@ -3,7 +3,7 @@
 
 #define MyAppName "≤Ó’À∑÷Œˆπ§æﬂ"
 #define MyAppEnglishName "Calculus Tool"
-#define MyAppVersion "1.0.3"
+#define MyAppVersion "1.0.4"
 #define MyAppPublisher "Lynn"
 #define MyAppURL "https://www.lexin.com/"
 #define MyAppExeName "calculus-tool.exe"

@@ -4,6 +4,7 @@ import cn.promptness.calculus.cache.AccountCache;
 import cn.promptness.calculus.pojo.AssetBill;
 import cn.promptness.calculus.pojo.CiaResponse;
 import cn.promptness.calculus.pojo.FileRecord;
+import cn.promptness.calculus.pojo.OrderPool;
 import cn.promptness.calculus.task.ContinuationTask;
 import cn.promptness.httpclient.HttpClientUtil;
 import cn.promptness.httpclient.HttpResult;
@@ -16,7 +17,8 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.io.File;
-import java.io.FileOutputStream;
+import java.nio.file.Files;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -28,6 +30,8 @@ public class AssetBillService {
     private HttpClientUtil httpClientUtil;
     @Resource
     private ContinuationTask continuationTask;
+
+    private static final List<Character> ORDER = Arrays.asList('A', 'O');
 
     /**
      * 获取标准回盘文件下载地址
@@ -59,8 +63,14 @@ public class AssetBillService {
         return null;
     }
 
-
     public List<AssetBill> selectAssetBill(String assetId) throws Exception {
+        if (ORDER.contains(assetId.charAt(0))) {
+            OrderPool orderPool = getOrderByCusOrderId(assetId);
+            if (orderPool == null) {
+                return Lists.newArrayList();
+            }
+            assetId = orderPool.getAssetId();
+        }
         HttpResult httpResult = httpClientUtil.doPostJson(
                 "https://ciaapi.dszc-amc.com/cgi/CalculusAssetBillService_selectAssetBill",
                 new String[]{assetId},
@@ -88,9 +98,29 @@ public class AssetBillService {
         return Lists.newArrayList();
     }
 
+    public OrderPool getOrderByCusOrderId(String orderId) throws Exception {
+        HttpResult httpResult = httpClientUtil.doPostJson(
+                "https://ciaapi.dszc-amc.com/cgi/PayOrderProtocol_getOrderByCusOrderId",
+                new String[]{orderId},
+                AccountCache.getHeaderList()
+        );
+        if (httpResult.isFailed()) {
+            return null;
+        }
+        CiaResponse<OrderPool> ciaResponse = JSON.parseObject(httpResult.getMessage(), new TypeReference<CiaResponse<OrderPool>>() {}.getType());
+        if (ciaResponse.isSuccess()) {
+            return ciaResponse.getData();
+        }
+        if (ciaResponse.getCode() == 1) {
+            continuationTask.continuation();
+        }
+        log.error(httpResult.getMessage());
+        return null;
+    }
+
     public File downloadFile(String path, String fileName) throws Exception {
         File file = new File(fileName);
-        HttpResult httpResult = httpClientUtil.doGet(path, new FileOutputStream(file));
+        HttpResult httpResult = httpClientUtil.doGet(path, Files.newOutputStream(file.toPath()));
         if (httpResult.isSuccess()) {
             return file;
         }

@@ -8,6 +8,6 @@
       minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8"
       xmlns:fx="http://javafx.com/fxml/1" spacing="10">
 
-    <ImageView fx:id="codeImageView" fitWidth="200" fitHeight="200"/>
+    <ImageView fx:id="codeImageView"/>
 
 </VBox>

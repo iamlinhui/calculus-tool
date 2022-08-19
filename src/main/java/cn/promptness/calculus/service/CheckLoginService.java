@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -32,8 +33,8 @@ public class CheckLoginService extends BaseService<Boolean> {
         return new Task<Boolean>() {
             @Override
             protected Boolean call() throws Exception {
-                while (loginStage.isShowing() && loginController.isCodeSuccess()) {
-                    Thread.sleep(3000);
+                while (loginStage.isShowing()) {
+                    TimeUnit.SECONDS.sleep(3);
                     // 获取oa_token
                     HttpResult httpResult = httpClientUtil.doGet(String.format("https://passport.oa.fenqile.com/user/main/scan.json?token=%s&_=%s", loginController.getToken(), loginController.getCurrentTimeMillis()), AccountCache.getHeaderList());
                     Login login = httpResult.getContent(Login.class);
